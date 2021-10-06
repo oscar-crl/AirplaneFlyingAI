@@ -3,7 +3,7 @@
 
 #include "MyCharacter.h"
 
-#include "Raycasting.h"
+#include "Lidar.h"
 
 // Sets default values
 AMyCharacter::AMyCharacter()
@@ -24,8 +24,11 @@ void AMyCharacter::BeginPlay()
 void AMyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	auto r = new Raycasting(this);
-	r->BuildLidar(DeltaTime);
+	auto r = new Lidar(this);
+	r->ApplyLidar(DeltaTime, [&](float d, FHitResult a)
+	{
+		this->OnLidarInfo(d, a);
+	});
 }
 
 // Called to bind functionality to input
@@ -33,5 +36,10 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void AMyCharacter::OnLidarInfo(float Delta, FHitResult& Result)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Some debug message!"));
 }
 
